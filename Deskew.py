@@ -1,6 +1,8 @@
-# import cv2
+import cv2
 import tkinter as tk
 from tkinter import ttk
+import modulos.utils as utl
+import modulos.Datos as dt
 
 import os
 
@@ -22,8 +24,10 @@ class App(tk.Frame):
         self.master.title(titulo_)
         self.master.iconbitmap(icono_)
         self.pack(fill='both', expand=True)
+        self.datos = dt.Datos()
+
         '----------- Widgets -----------'
-        self.frame_izquierdo = Frame_izquierdo(self)
+        self.frame_izquierdo = Frame_izquierdo(self, self.datos)
         self.frame_derecho = Frame_derecho(self)
         self.separador = ttk.Separator(self, orient='vertical')
 
@@ -38,19 +42,50 @@ class App(tk.Frame):
 
 
 class Frame_izquierdo(tk.Frame):
-    def __init__(self, padre_):
+    def __init__(self, padre_, datos_: dt.Datos):
         super().__init__(master=padre_)
         self.configure(bg='black')
+        self.datos = datos_
+        self.img_canvas = datos_.get_imagen_tk()
 
         '----------- Widgets -----------'
-        self.imagen = tk.Canvas(self, bg='gray')
+        self.cnv_imagen = tk.Canvas(self, bg='gray')
         self.separador = ttk.Separator(self, orient='horizontal')
+        self.frame_inferior = ttk.Frame(self)
         '----------- Layout -----------'
-        self.imagen.grid(column=0, row=0, sticky='nsew')
+        self.cnv_imagen.grid(column=0, row=0, sticky='nsew')
         self.separador.grid(column=0, row=1, sticky='nsew')
+        self.frame_inferior.grid(column=0, row=2, sticky='nsew')
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=0)
+        self.rowconfigure(2, weight=0)
+
+        '----------- Widgets Frame inferior -----------'
+        self.ctrol_angulo = ttk.Spinbox(self.frame_inferior)
+        self.ctrol_angulo.configure(command=lambda: self.cmd_ctrl_angulo(), from_=-45.0, to=45.0)
+        self.ctrol_angulo.set(0)
+        self.lbl_angulo = ttk.Label(self.frame_inferior)
+
+        '----------- Layout Frame inferior -----------'
+        self.frame_inferior.columnconfigure(0, weight=10)
+        self.frame_inferior.columnconfigure(1, weight=1)
+        self.ctrol_angulo.grid(column=0, row=0, sticky='ew')
+        self.lbl_angulo.grid(column=1, row=0, sticky='ew')
+
+        '----------- Rutina de inicio -----------'
+        self.actualizar_imagen()
+
+    def actualizar_imagen(self, ):
+        self.img_canvas = self.datos.get_imagen_tk()
+        print(self.cnv_imagen.create_image(0, 0, anchor='nw', image=self.img_canvas, tags='analisis'))
+
+    def cmd_ctrl_angulo(self):
+        print('Cmd Ctrol angulo')
+        self.datos.flt_angulo_actual = float(self.ctrol_angulo.get())
+        self.datos.rotar_imagen()
+        self.actualizar_imagen()
+        pass
 
 
 class Frame_derecho(ttk.Frame):
@@ -61,10 +96,6 @@ class Frame_derecho(ttk.Frame):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=0)
-
-
-class Modelo:
-    pass
 
 
 # **************** Loop principal ****************
