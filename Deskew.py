@@ -7,10 +7,6 @@ import modulos.Datos as dt
 
 import os
 
-"""
-
-"""
-
 
 class App(tk.Frame):
     def __init__(self, master_=None, dimensiones_='1280x720', titulo_='Aplicación', icono_=None):
