@@ -8,7 +8,6 @@ import modulos.Datos as dt
 import os
 
 """
-todo [feat]: Barra de navegación
 
 """
 
