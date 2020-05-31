@@ -1,16 +1,13 @@
-import cv2
 import tkinter as tk
 from tkinter import ttk
-import modulos.utils as utl
+
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+
 import modulos.Datos as dt
 
 import os
 
 """
-todo [feat]: Canvas de imágen CV2
-todo [feat]: Control de rotación
-todo [feat]: Rotar imagen cv2 usando control de rotación
-todo [feat]: Canvas de imagen matplotlib
 todo [feat]: Barra de navegación
 
 """
@@ -28,7 +25,7 @@ class App(tk.Frame):
 
         '----------- Widgets -----------'
         self.frame_izquierdo = Frame_izquierdo(self, self.datos)
-        self.frame_derecho = Frame_derecho(self)
+        self.frame_derecho = Frame_derecho(self, self.datos)
         self.separador = ttk.Separator(self, orient='vertical')
 
         '----------- Layout -----------'
@@ -85,17 +82,21 @@ class Frame_izquierdo(tk.Frame):
         self.datos.flt_angulo_actual = float(self.ctrol_angulo.get())
         self.datos.rotar_imagen()
         self.actualizar_imagen()
-        pass
 
 
 class Frame_derecho(ttk.Frame):
-    def __init__(self, padre_):
+    def __init__(self, padre_, datos_: dt.Datos):
         super().__init__(master=padre_)
+        self.datos = datos_
+
         '----------- Widgets -----------'
+        self.cnv_plt_canvas = FigureCanvasTkAgg(self.datos.get_figura_plt(), self, )
+
         '----------- Layout -----------'
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=0)
+        self.cnv_plt_canvas.get_tk_widget().grid(column=0, row=0, sticky='nsew')
 
 
 # **************** Loop principal ****************
