@@ -32,7 +32,7 @@ class App(tk.Frame):
         self.frame_izquierdo.grid(column=0, row=0, sticky='nsew')
         self.separador.grid(column=1, row=0, sticky='nsew')
         self.frame_derecho.grid(column=2, row=0, sticky='nsew')
-        self.columnconfigure(0, weight=1)
+        self.columnconfigure(0, weight=10)
         self.columnconfigure(1, weight=0)
         self.columnconfigure(2, weight=1)
         self.rowconfigure(0, weight=1)
@@ -60,7 +60,7 @@ class Frame_izquierdo(tk.Frame):
 
         '----------- Widgets Frame inferior -----------'
         self.ctrol_angulo = ttk.Spinbox(self.frame_inferior)
-        self.ctrol_angulo.configure(command=lambda: self.cmd_ctrl_angulo(), from_=-45.0, to=45.0)
+        self.ctrol_angulo.configure(command=lambda: self.cmd_ctrl_angulo(), from_=-45.0, to=45.0, increment=0.1)
         self.ctrol_angulo.set(0)
         self.lbl_angulo = ttk.Label(self.frame_inferior)
 
@@ -75,13 +75,14 @@ class Frame_izquierdo(tk.Frame):
 
     def actualizar_imagen(self, ):
         self.img_canvas = self.datos.get_imagen_tk()
-        print(self.cnv_imagen.create_image(0, 0, anchor='nw', image=self.img_canvas, tags='analisis'))
+        self.cnv_imagen.create_image(0, 0, anchor='nw', image=self.img_canvas, tags='analisis')
 
     def cmd_ctrl_angulo(self):
         print('Cmd Ctrol angulo')
         self.datos.flt_angulo_actual = float(self.ctrol_angulo.get())
         self.datos.rotar_imagen()
         self.actualizar_imagen()
+        self.datos.actualizar_figura_plt()
 
 
 class Frame_derecho(ttk.Frame):
@@ -91,12 +92,14 @@ class Frame_derecho(ttk.Frame):
 
         '----------- Widgets -----------'
         self.cnv_plt_canvas = FigureCanvasTkAgg(self.datos.get_figura_plt(), self, )
+        self.lbl_sum_psd = ttk.Label(self, text='Suma de PSD:')
 
         '----------- Layout -----------'
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=0)
         self.cnv_plt_canvas.get_tk_widget().grid(column=0, row=0, sticky='nsew')
+        self.lbl_sum_psd.grid(column=0, row=1, sticky='nsew')
 
 
 # **************** Loop principal ****************

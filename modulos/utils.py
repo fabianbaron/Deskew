@@ -1,5 +1,6 @@
 import glob
 from PIL import Image, ImageTk
+import numpy as np
 
 import cv2
 import os
@@ -69,3 +70,9 @@ def rotar_imagen_cv2(imagen_cv2_, angulo_: float):
     imagen_rotada = cv2.warpAffine(imagen_cv2_, M, (w, h),
                                    flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
     return imagen_rotada
+
+
+def normalizar_datos(datos: np.array) -> np.array:
+    datos_abs = np.abs(datos)
+    datos_normalizados = datos_abs / np.max(datos_abs)
+    return datos_normalizados
